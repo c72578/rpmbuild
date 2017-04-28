@@ -2,7 +2,7 @@
 %define minor 9
 Name:           cpprest
 Version:        2.9.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        C++ REST library
 License:        MIT and BSD and zlib
 # main: MIT (license.txt)
@@ -12,7 +12,7 @@ License:        MIT and BSD and zlib
 # common/md5.hpp: zlib (ThirdPartyNotices.txt)
 # utf8_validation.hpp: MIT (ThirdPartyNotices.txt)
 Url:            https://github.com/Microsoft/cpprestsdk
-Source0:        https://github.com/Microsoft/cpprestsdk/archive/v%{version}.tar.gz
+Source0:        https://github.com/Microsoft/cpprestsdk/archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
 BuildRequires:  boost-devel >= 1.55
 BuildRequires:  cmake >= 2.6
 BuildRequires:  gcc-c++
@@ -38,6 +38,10 @@ Development files.
 
 %prep
 %setup -q -n cpprestsdk-%{version}
+# Convert ThirdPartyNotices.txt to utf-8
+iconv -f iso-8859-15 -t utf-8 ThirdPartyNotices.txt > ThirdPartyNotices.txt.tmp
+touch -r ThirdPartyNotices.txt ThirdPartyNotices.txt.tmp
+mv -f ThirdPartyNotices.txt.tmp ThirdPartyNotices.txt
 
 %build
 cd Release
@@ -68,6 +72,11 @@ ln -sf libcpprest.so.%{major}.%{minor} %{buildroot}%{_libdir}/libcpprest.so
 
 
 %changelog
+* Fri Apr 28 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.9.1-3
+- Updated spec file
+- Changed Source0 filename from v2.9.1.tar.gz to cpprest-2.9.1.tar.gz
+- Convert ThirdPartyNotices.txt to utf-8
+
 * Tue Apr 25 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.9.1-2
 - Updated spec file according to package review feedback from:
   https://bugzilla.redhat.com/show_bug.cgi?id=1440704#c3
