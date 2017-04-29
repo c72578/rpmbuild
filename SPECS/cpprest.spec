@@ -17,6 +17,7 @@ BuildRequires:  boost-devel >= 1.55
 BuildRequires:  cmake >= 2.6
 BuildRequires:  gcc-c++
 BuildRequires:  openssl-devel >= 1.0
+BuildRequires:  dos2unix
 
 %description
 The C++ REST SDK is a Microsoft project for cloud-based client-server
