@@ -2,7 +2,7 @@
 %define minor 9
 Name:           cpprest
 Version:        2.9.1
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        C++ REST library
 License:        MIT and BSD and zlib
 # main: MIT (license.txt)
@@ -53,6 +53,8 @@ chmod -x Release/src/http/oauth/oauth1.cpp
 
 %build
 cd Release
+# https://fedoraproject.org/wiki/Common_Rpmlint_issues#unused-direct-shlib-dependency
+export CXXFLAGS="%{optflags} -Wl,--as-needed"
 %cmake -DCMAKE_BUILD_TYPE=Release
 make %{?_smp_mflags}
 
@@ -78,6 +80,9 @@ ln -sf libcpprest.so.%{major}.%{minor} %{buildroot}%{_libdir}/libcpprest.so
 
 
 %changelog
+* Sun Apr 30 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.9.1-5
+- Fix unused-direct-shlib-dependency reported by rpmlint (installed packages)
+
 * Sat Apr 29 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.9.1-4
 - Updated spec file
 - Remove spurious-executable-perm earlier in spec file (after setup)
