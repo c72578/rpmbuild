@@ -56,7 +56,10 @@ set_target_properties(cld2 PROPERTIES
   VERSION ${VERSION}
   SOVERSION 0
   )
-add_library(cld2_full SHARED ${cld2_full_SOURCE_FILES})
+#add_library(cld2_full SHARED ${cld2_full_SOURCE_FILES})
+# 2017-05-03, Wolfgang Stöggl
+# added common_SOURCE_FILES to cld2_full, otherwise shared-lib-without-dependency-information
+add_library(cld2_full SHARED ${common_SOURCE_FILES} ${cld2_full_SOURCE_FILES})
 set_target_properties(cld2_full PROPERTIES
   ENABLE_EXPORTS On
   OUTPUT_NAME cld2_full
