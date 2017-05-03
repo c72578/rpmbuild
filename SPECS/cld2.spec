@@ -10,13 +10,16 @@
 
 Name:           cld2
 Version:        0.0.0
-Release:        0.1%{?usesnapshot:.git%{shortcommit0}}%{?dist}
+Release:        0.2%{?usesnapshot:.git%{shortcommit0}}%{?dist}
 Summary:        A library to detect the natural language of text
 License:        ASL 2.0
 URL:            https://github.com/CLD2Owners/cld2/
-Source0:         https://github.com/%{githubproj}/%{githubrepo}/archive/%{commit0}.tar.gz#/%{name}-%{shortcommit0}.tar.gz
-# https://code.google.com/p/cld2/issues/detail?id=29
-Source1:        CMakeLists.txt
+Source0:        https://github.com/%{githubproj}/%{githubrepo}/archive/%{commit0}.tar.gz#/%{name}-%{shortcommit0}.tar.gz
+# CMakeLists.txt originally from https://code.google.com/p/cld2/issues/detail?id=29
+# Updated version 0.0.197 from Debian at https://sources.debian.net/src/cld2/0.0.0-git20150806-5/CMakeLists.txt/
+# There is no CMakeLists.txt yet at https://github.com/CLD2Owners/cld2/
+# Stored CMakeLists.txt 0.0.198 at github repo for now
+Source1:        https://raw.githubusercontent.com/c72578/rpmbuild/master/SOURCES/CMakeLists.txt
 BuildRequires:  cmake >= 2.8
 BuildRequires:  gcc-c++
 
@@ -24,16 +27,9 @@ BuildRequires:  gcc-c++
 A library that detects over 80 languages in UTF-8 text, based largely
 on groups of four letters. Also tables for 160+ language versions.
 
-%package -n libcld2-0
-Summary:        A library to detect the natural language of text
-
-%description -n libcld2-0
-A library that detects over 80 languages in UTF-8 text, based largely
-on groups of four letters. Also tables for 160+ language versions.
-
 %package devel
 Summary:        Development files for cld2
-Requires:       libcld2-0 = %{version}
+Requires:       %{name}%{?_isa} = %{version}-%{release}
 
 %description devel
 A library that detects over 80 languages in UTF-8 text, based largely
@@ -70,18 +66,16 @@ make %{?_smp_mflags}
 cd build
 make %{?_smp_mflags} DESTDIR=%{buildroot} install
 
-%post -n libcld2-0 -p /sbin/ldconfig
-%postun -n libcld2-0 -p /sbin/ldconfig
+%post -p /sbin/ldconfig
+%postun -p /sbin/ldconfig
 
-%files -n libcld2-0
-%defattr(-,root,root)
+%files
 %doc LICENSE
 %{_libdir}/libcld2.so.*
 %{_libdir}/libcld2_dynamic.so.*
 %{_libdir}/libcld2_full.so.*
 
 %files devel
-%defattr(-,root,root)
 %doc LICENSE docs/*
 %{_includedir}/%{name}
 %{_libdir}/libcld2.so
@@ -89,6 +83,11 @@ make %{?_smp_mflags} DESTDIR=%{buildroot} install
 %{_libdir}/libcld2_full.so
 
 %changelog
+* Wed May 03 2017 Wolfgang Stöggl <c72578@yahoo.de> - 0.0.0-0.2.gitb56fa78
+- Modifications to spec file
+- Remove sub-package libcld2. Names for rpms are cld2 and cld2-devel now
+- Updated version of CMakeLists.txt
+
 * Wed Apr 12 2017 Wolfgang Stöggl <c72578@yahoo.de> - 0.0.0-0.1.gitb56fa78
 - Update to newer git snapshot
 
