@@ -10,7 +10,7 @@
 
 Name:           cld2
 Version:        0.0.0
-Release:        0.2%{?usesnapshot:.git%{shortcommit0}}%{?dist}
+Release:        0.3%{?usesnapshot:.git%{shortcommit0}}%{?dist}
 Summary:        A library to detect the natural language of text
 License:        ASL 2.0
 URL:            https://github.com/CLD2Owners/cld2/
@@ -48,6 +48,8 @@ cp %{SOURCE1} .
 %build
 mkdir build
 cd build
+# https://fedoraproject.org/wiki/Common_Rpmlint_issues#unused-direct-shlib-dependency
+# Add Wl,--as-needed to CXX_FLAGS
 # Fix build with gcc-6, build with -std=c++98. See Github, CLD2 issue #47
 # https://github.com/CLD2Owners/cld2/issues/47
 cmake .. \
@@ -59,7 +61,7 @@ cmake .. \
     -DCMAKE_SKIP_RPATH:BOOL=ON \
     -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
     -DCMAKE_C_FLAGS:STRING="%{optflags}" \
-    -DCMAKE_CXX_FLAGS:STRING="%{optflags} -std=c++98"
+    -DCMAKE_CXX_FLAGS:STRING="%{optflags} -std=c++98 -Wl,--as-needed"
 make %{?_smp_mflags}
 
 %install
@@ -83,6 +85,11 @@ make %{?_smp_mflags} DESTDIR=%{buildroot} install
 %{_libdir}/libcld2_full.so
 
 %changelog
+* Wed May 03 2017 Wolfgang Stöggl <c72578@yahoo.de> - 0.0.0-0.3.gitb56fa78
+- Fix unused-direct-shlib-dependency reported by rpmlint (installed packages)
+- Update CMakeLists.txt to version 0.0.198, to avoid 
+  shared-lib-without-dependency-information of libcld2_full
+
 * Wed May 03 2017 Wolfgang Stöggl <c72578@yahoo.de> - 0.0.0-0.2.gitb56fa78
 - Modifications to spec file
 - Remove sub-package libcld2. Names for rpms are cld2 and cld2-devel now
@@ -93,11 +100,4 @@ make %{?_smp_mflags} DESTDIR=%{buildroot} install
 
 * Tue Apr 11 2017 Wolfgang Stöggl <c72578@yahoo.de> - 0.0.0~svn195-1
 - Initial Fedora packaging.
-- Adapted from Opensuse cld2-0.0.0~svn195-2.3.src.rpm
-  http://download.opensuse.org/repositories/openSUSE:/Factory/standard/src/cld2-0.0.0~svn195-2.3.src.rpm
 
-* Tue Jun 21 2016 astieger@suse.com
-- fix build with gcc6 in Factory, build with -std=c++98 boo#985158
-
-* Wed May 27 2015 astieger@suse.com
-- initial version
