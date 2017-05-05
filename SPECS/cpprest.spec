@@ -2,7 +2,7 @@
 %define minor 9
 Name:           cpprest
 Version:        2.9.1
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        C++ REST library
 License:        MIT and BSD and zlib
 # main: MIT (license.txt)
@@ -54,15 +54,17 @@ chmod -x Release/src/http/oauth/oauth1.cpp
 %build
 cd Release
 # https://fedoraproject.org/wiki/Common_Rpmlint_issues#unused-direct-shlib-dependency
+mkdir build.release
+cd build.release
 export CXXFLAGS="%{optflags} -Wl,--as-needed"
-%cmake -DCMAKE_BUILD_TYPE=Release
+%cmake .. -DCMAKE_BUILD_TYPE=Release
 make %{?_smp_mflags}
 
 %install
 mkdir -p %{buildroot}%{_includedir}
 cp -r Release/include/* %{buildroot}%{_includedir}/
 install -d -m 755 %{buildroot}%{_libdir}
-cp Release/Binaries/libcpprest.so.%{major}.%{minor} %{buildroot}%{_libdir}/
+cp Release/build.release/Binaries/libcpprest.so.%{major}.%{minor} %{buildroot}%{_libdir}/
 ln -sf libcpprest.so.%{major}.%{minor} %{buildroot}%{_libdir}/libcpprest.so
 
 %post -p /sbin/ldconfig
@@ -80,6 +82,9 @@ ln -sf libcpprest.so.%{major}.%{minor} %{buildroot}%{_libdir}/libcpprest.so
 
 
 %changelog
+* Fri May 05 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.9.1-6
+- Use directory build.release for cmake
+
 * Sun Apr 30 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.9.1-5
 - Fix unused-direct-shlib-dependency reported by rpmlint (installed packages)
 
