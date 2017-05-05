@@ -10,7 +10,7 @@
 
 Name:           cld2
 Version:        0.0.0
-Release:        0.3%{?usesnapshot:.git%{shortcommit0}}%{?dist}
+Release:        0.4%{?usesnapshot:.git%{shortcommit0}}%{?dist}
 Summary:        A library to detect the natural language of text
 License:        ASL 2.0
 URL:            https://github.com/CLD2Owners/cld2/
@@ -52,16 +52,8 @@ cd build
 # Add Wl,--as-needed to CXX_FLAGS
 # Fix build with gcc-6, build with -std=c++98. See Github, CLD2 issue #47
 # https://github.com/CLD2Owners/cld2/issues/47
-cmake .. \
-    -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
-    -DCMAKE_INSTALL_LIBDIR:PATH=%{_libdir} \
-    -DINCLUDE_INSTALL_DIR:PATH=%{_includedir} \
-    -DLIB_INSTALL_DIR:PATH=%{_libdir} \
-    -DCMAKE_BUILD_TYPE=release \
-    -DCMAKE_SKIP_RPATH:BOOL=ON \
-    -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
-    -DCMAKE_C_FLAGS:STRING="%{optflags}" \
-    -DCMAKE_CXX_FLAGS:STRING="%{optflags} -std=c++98 -Wl,--as-needed"
+export CXXFLAGS="%{optflags} -std=c++98 -Wl,--as-needed"
+%cmake .. -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_LIBDIR:PATH=%{_libdir}
 make %{?_smp_mflags}
 
 %install
@@ -85,6 +77,9 @@ make %{?_smp_mflags} DESTDIR=%{buildroot} install
 %{_libdir}/libcld2_full.so
 
 %changelog
+* Fri May 05 2017 Wolfgang Stöggl <c72578@yahoo.de> - 0.0.0-0.4.gitb56fa78
+- Simplify cmake, use cmake macro
+
 * Wed May 03 2017 Wolfgang Stöggl <c72578@yahoo.de> - 0.0.0-0.3.gitb56fa78
 - Fix unused-direct-shlib-dependency reported by rpmlint (installed packages)
 - Update CMakeLists.txt to version 0.0.198, to avoid 
