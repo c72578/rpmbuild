@@ -2,7 +2,7 @@
 %define minor 9
 Name:           cpprest
 Version:        2.9.1
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        C++ REST library
 License:        MIT and BSD and zlib
 # main: MIT (license.txt)
@@ -13,10 +13,24 @@ License:        MIT and BSD and zlib
 # utf8_validation.hpp: MIT (ThirdPartyNotices.txt)
 Url:            https://github.com/Microsoft/cpprestsdk
 Source0:        https://github.com/Microsoft/cpprestsdk/archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
+%if 0%{?fedora} > 25
+# Patch0 fixes compilation errors in F26 etc., which contain openssl >= 1.1
+# SSL_R_SHORT_READ undefined in openssl-1.1
+# See also https://github.com/zaphoyd/websocketpp/issues/599
+# https://raw.githubusercontent.com/c72578/rpmbuild/master/SOURCES/cpprest-tls.hpp.patch
+Patch0:         %{name}-tls.hpp.patch
+# Patch1 https://github.com/Microsoft/cpprestsdk/pull/285
+# Fix build issue with openssl-1.1
+Patch1:         %{name}-Fix-build-issue-with-openssl-1.1-From-Kurt-Roeckx.patch
+%endif
 BuildRequires:  boost-devel >= 1.55
 BuildRequires:  cmake >= 2.6
 BuildRequires:  gcc-c++
 BuildRequires:  openssl-devel >= 1.0
+# Current websockettpp versions: 0.4 (F24), 0.7 (>= F25), 0.5.1 (embedded in cpprestsdk 2.9.1)
+BuildRequires:  websocketpp-devel >= 0.4
+# PR submitted upstream: Change end-of-line encoding of two files to Unix (LF)
+# https://github.com/Microsoft/cpprestsdk/pull/429
 BuildRequires:  dos2unix
 
 %description
@@ -38,7 +52,7 @@ project aims to help C++ developers connect to and interact with services.
 Development files.
 
 %prep
-%setup -q -n cpprestsdk-%{version}
+%autosetup -n cpprestsdk-%{version} -p1
 # Convert ThirdPartyNotices.txt to utf-8
 iconv -f iso-8859-15 -t utf-8 ThirdPartyNotices.txt > ThirdPartyNotices.txt.tmp
 touch -r ThirdPartyNotices.txt ThirdPartyNotices.txt.tmp
@@ -54,10 +68,19 @@ chmod -x Release/src/http/oauth/oauth1.cpp
 %build
 cd Release
 # https://fedoraproject.org/wiki/Common_Rpmlint_issues#unused-direct-shlib-dependency
+# -Wl,--as-needed
 mkdir build.release
 cd build.release
 export CXXFLAGS="%{optflags} -Wl,--as-needed"
+%if 0%{?fedora} > 25
+# Workaround for now, until this is solved
+# Build against the embedded, older version of websocketpp from cpprest and patch it, because websocketpp 0.7
+# in Fedora >= 26 is not (yet) compatible here with OpenSSL 1.1 (SSL_R_SHORT_READ undefined in openssl-1.1)
 %cmake .. -DCMAKE_BUILD_TYPE=Release
+%else
+# Set CMAKE_INCLUDE_PATH where websocketpp is installed in Fedora
+%cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INCLUDE_PATH=/usr/share/cmake/websocketpp/
+%endif
 make %{?_smp_mflags}
 
 %install
@@ -82,6 +105,11 @@ ln -sf libcpprest.so.%{major}.%{minor} %{buildroot}%{_libdir}/libcpprest.so
 
 
 %changelog
+* Tue May 09 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.9.1-7
+- Add requirement websocketpp-devel.
+  Build against the Fedora websocketpp package and not the embedded version of cpprest.
+- Add -DCMAKE_INCLUDE_PATH=/usr/share/cmake/websocketpp/ so that websocketpp is found
+
 * Fri May 05 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.9.1-6
 - Use directory build.release for cmake
 
