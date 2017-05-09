@@ -1,0 +1,47 @@
+From 8296a695b20a0fa653a22232358211bef4c260bc Mon Sep 17 00:00:00 2001
+From: Gianfranco Costamagna <costamagnagianfranco@yahoo.it>
+Date: Thu, 3 Nov 2016 21:15:20 +0100
+Subject: [PATCH] Fix build issue with openssl-1.1 (From Kurt Roeckx)
+
+---
+ Release/src/websockets/client/ws_client_wspp.cpp | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/Release/src/websockets/client/ws_client_wspp.cpp b/Release/src/websockets/client/ws_client_wspp.cpp
+index 9f91d68..3ae5377 100644
+--- a/Release/src/websockets/client/ws_client_wspp.cpp
++++ b/Release/src/websockets/client/ws_client_wspp.cpp
+@@ -212,6 +212,7 @@ public:
+                     return rfc2818(preverified, verifyCtx);
+                 });
+ 
++#if OPENSSL_VERSION_NUMBER < 0x10100000L
+                 // OpenSSL stores some per thread state that never will be cleaned up until
+                 // the dll is unloaded. If static linking, like we do, the state isn't cleaned up
+                 // at all and will be reported as leaks.
+@@ -219,6 +220,7 @@ public:
+                 // This is necessary here because it is called on the user's thread calling connect(...)
+                 // eventually through websocketpp::client::get_connection(...)
+                 ERR_remove_thread_state(nullptr);
++#endif
+ 
+                 return sslContext;
+             });
+@@ -382,11 +384,14 @@ public:
+             crossplat::JVM.load()->DetachCurrentThread();
+ #endif
+ 
++#if OPENSSL_VERSION_NUMBER < 0x10100000L
+             // OpenSSL stores some per thread state that never will be cleaned up until
+             // the dll is unloaded. If static linking, like we do, the state isn't cleaned up
+             // at all and will be reported as leaks.
+             // See http://www.openssl.org/support/faq.html#PROG13
+             ERR_remove_thread_state(nullptr);
++#endif
++
+         });
+         return pplx::create_task(m_connect_tce);
+     }
+-- 
+2.9.3
+

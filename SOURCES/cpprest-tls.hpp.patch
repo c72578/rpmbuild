@@ -1,5 +1,5 @@
---- Release/libs/websocketpp/websocketpp/transport/asio/security/tls.hpp.orig	2017-05-08 10:26:46.716716379 +0200
-+++ Release/libs/websocketpp/websocketpp/transport/asio/security/tls.hpp	2017-05-08 12:19:43.082078616 +0200
+--- cpprest/Release/libs/websocketpp/websocketpp/transport/asio/security/tls.hpp.orig	2017-05-08 10:26:46.716716379 +0200
++++ cpprest/Release/libs/websocketpp/websocketpp/transport/asio/security/tls.hpp	2017-05-08 12:19:43.082078616 +0200
 @@ -307,13 +307,9 @@
       */
      lib::error_code translate_ec(boost::system::error_code ec) {
