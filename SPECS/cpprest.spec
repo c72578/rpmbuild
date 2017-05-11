@@ -109,6 +109,7 @@ ln -sf libcpprest.so.%{major}.%{minor} %{buildroot}%{_libdir}/libcpprest.so
 - Add requirement websocketpp-devel.
   Build against the Fedora websocketpp package and not the embedded version of cpprest.
 - Add -DCMAKE_INCLUDE_PATH=/usr/share/cmake/websocketpp/ so that websocketpp is found
+- Add patch cpprest-Fix-build-issue-with-openssl-1.1-From-Kurt-Roeckx
 
 * Fri May 05 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.9.1-6
 - Use directory build.release for cmake
