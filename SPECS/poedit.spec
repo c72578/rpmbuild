@@ -1,6 +1,6 @@
 Name:           poedit
-Version:        2.0.1
-Release:        3%{?dist}
+Version:        2.0.2
+Release:        1%{?dist}
 Summary:        GUI editor for GNU gettext .po files
 Summary(de):    Grafischer Editor für GNU Gettext-Dateien
 
@@ -124,6 +124,13 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 
 
 %changelog
+* Mon May 15 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.0.2-1
+- New upstream version
+- Compile with wxGTK3-3.0.3
+  Fixed spurious assert in wxGTK wxDataViewCtrl::EditItem()
+- Compile with CLD2 language detection from copr c72578/cld2
+- Compile with Crowdin integration using cpprest from copr c72578/cpprest
+
 * Tue May 02 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.0.1-3
 - Compile with wxGTK3-3.0.3-1 using cpprest from copr c72578/wxGTK3
   Fixed spurious assert in wxGTK wxDataViewCtrl::EditItem()
