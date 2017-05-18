@@ -1,6 +1,6 @@
 Name:           poedit
 Version:        2.0.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        GUI editor for GNU gettext .po files
 Summary(de):    Grafischer Editor für GNU Gettext-Dateien
 
@@ -21,9 +21,12 @@ BuildRequires:  desktop-file-utils
 BuildRequires:  po4a
 BuildRequires:  libsecret-devel
 BuildRequires:  openssl-devel
-# cpprest from copr c72578/cpprest 
+# cpprest from copr c72578/cpprest
 BuildRequires:  cpprest-devel
+# cld2 from copr c72578/cld2
 BuildRequires:  cld2-devel
+# Use json.hpp from Fedora and not the version bundled with Poedit
+BuildRequires:  json-devel
 
 Requires:       gettext
 
@@ -124,6 +127,14 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 
 
 %changelog
+* Thu May 18 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.0.2-2
+- Add dependency on json-devel
+  Use json.hpp from Fedora and not the version bundled with Poedit
+- Compile with wxGTK3-3.0.3
+  Fixed spurious assert in wxGTK wxDataViewCtrl::EditItem()
+- Compile with CLD2 language detection from copr c72578/cld2
+- Compile with Crowdin integration using cpprest from copr c72578/cpprest
+
 * Mon May 15 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.0.2-1
 - New upstream version
 - Compile with wxGTK3-3.0.3
