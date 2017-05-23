@@ -2,21 +2,15 @@
 %define minor 9
 Name:           cpprest
 Version:        2.9.1
-Release:        8%{?dist}
+Release:        9%{?dist}
 Summary:        C++ REST library
-License:        MIT and BSD and zlib
-# main: MIT (license.txt)
-# Websocket++: New BSD (no advertising, 3 clause) (ThirdPartyNotices.txt)
-# base64/base64.hpp: Zlib (ThirdPartyNotices.txt)
-# sha1/sha1.hpp: New BSD (no advertising, 3 clause) (ThirdPartyNotices.txt)
-# common/md5.hpp: zlib (ThirdPartyNotices.txt)
-# utf8_validation.hpp: MIT (ThirdPartyNotices.txt)
+License:        MIT
 Url:            https://github.com/Microsoft/cpprestsdk
 Source0:        https://github.com/Microsoft/cpprestsdk/archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
 %if 0%{?fedora} > 25
 # Patch1 https://github.com/Microsoft/cpprestsdk/pull/285
 # Fix build issue with openssl-1.1
-Patch1:         %{name}-Fix-build-issue-with-openssl-1.1-From-Kurt-Roeckx.patch
+Patch1:         cpprest-2.9.1-openssl-1.1.patch
 %endif
 BuildRequires:  boost-devel >= 1.55
 BuildRequires:  cmake >= 2.6
@@ -82,17 +76,26 @@ ln -sf libcpprest.so.%{major}.%{minor} %{buildroot}%{_libdir}/libcpprest.so
 %postun -p /sbin/ldconfig
 
 %files
-%doc CONTRIBUTORS.txt license.txt ThirdPartyNotices.txt
+%doc CONTRIBUTORS.txt
+%license license.txt
 %{_libdir}/libcpprest.so.%{major}.%{minor}
 
 %files devel
-%doc CONTRIBUTORS.txt license.txt
+%doc CONTRIBUTORS.txt
+%license license.txt
 %{_includedir}/%{name}
 %{_includedir}/pplx
 %{_libdir}/libcpprest.so
 
 
 %changelog
+* Tue May 23 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.9.1-9
+- Rebuild using websocketpp-0.7.0-5.fc26 for F26 and rawhide
+- Rename patch file including version of cpprest
+- Set license to MIT. This is the license of C++ REST SDK (license.txt).
+  Websocket++ is a separate Fedora package (websocketpp-devel) and its 
+  license is handled there.
+
 * Thu May 18 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.9.1-8
 - Rebuild for testing websocketpp-0.7.0-4.fc26
 
