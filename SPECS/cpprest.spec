@@ -15,7 +15,8 @@ Patch1:         cpprest-2.9.1-openssl-1.1.patch
 BuildRequires:  boost-devel >= 1.55
 BuildRequires:  cmake >= 2.6
 BuildRequires:  gcc-c++
-BuildRequires:  openssl-devel >= 1.0
+# BuildRequires:  openssl-devel >= 1.0
+BuildRequires:  pkgconfig(openssl) >= 1.0
 # Current websockettpp versions: 0.4 (F24), 0.7 (>= F25), 0.5.1 (embedded in cpprestsdk 2.9.1)
 BuildRequires:  websocketpp-devel >= 0.4
 # PR submitted upstream: Change end-of-line encoding of two files to Unix (LF)
@@ -95,6 +96,7 @@ ln -sf libcpprest.so.%{major}.%{minor} %{buildroot}%{_libdir}/libcpprest.so
 - Set license to MIT. This is the license of C++ REST SDK (license.txt).
   Websocket++ is a separate Fedora package (websocketpp-devel) and its 
   license is handled there.
+- Use BuildRequires: pkgconfig(openssl) instead of openssl-devel
 
 * Thu May 18 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.9.1-8
 - Rebuild for testing websocketpp-0.7.0-4.fc26
