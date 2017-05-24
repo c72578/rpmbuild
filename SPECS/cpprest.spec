@@ -2,16 +2,14 @@
 %define minor 9
 Name:           cpprest
 Version:        2.9.1
-Release:        9%{?dist}
+Release:        10%{?dist}
 Summary:        C++ REST library
 License:        MIT
 Url:            https://github.com/Microsoft/cpprestsdk
 Source0:        https://github.com/Microsoft/cpprestsdk/archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
-%if 0%{?fedora} > 25
 # Patch1 https://github.com/Microsoft/cpprestsdk/pull/285
 # Fix build issue with openssl-1.1
 Patch1:         cpprest-2.9.1-openssl-1.1.patch
-%endif
 BuildRequires:  boost-devel >= 1.55
 BuildRequires:  cmake >= 2.6
 BuildRequires:  gcc-c++
@@ -90,6 +88,10 @@ ln -sf libcpprest.so.%{major}.%{minor} %{buildroot}%{_libdir}/libcpprest.so
 
 
 %changelog
+* Wed May 24 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.9.1-10
+- Apply cpprest-2.9.1-openssl-1.1.patch anyway, remove the condition
+  fedora > 25, which is not needed
+
 * Tue May 23 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.9.1-9
 - Rebuild using websocketpp-0.7.0-5.fc26 for F26 and rawhide
 - Rename patch file including version of cpprest
