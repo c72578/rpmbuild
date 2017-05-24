@@ -10,7 +10,7 @@
 
 Name:           cld2
 Version:        0.0.0
-Release:        0.4%{?usesnapshot:.git%{shortcommit0}}%{?dist}
+Release:        0.5%{?usesnapshot:.git%{shortcommit0}}%{?dist}
 Summary:        A library to detect the natural language of text
 License:        ASL 2.0
 URL:            https://github.com/CLD2Owners/cld2/
@@ -18,7 +18,7 @@ Source0:        https://github.com/%{githubproj}/%{githubrepo}/archive/%{commit0
 # CMakeLists.txt originally from https://code.google.com/p/cld2/issues/detail?id=29
 # Updated version 0.0.197 from Debian at https://sources.debian.net/src/cld2/0.0.0-git20150806-5/CMakeLists.txt/
 # There is no CMakeLists.txt yet at https://github.com/CLD2Owners/cld2/
-# Stored CMakeLists.txt 0.0.198 at github repo for now
+# Stored CMakeLists.txt 0.0.198 at own github repo for now
 Source1:        https://raw.githubusercontent.com/c72578/rpmbuild/master/SOURCES/CMakeLists.txt
 BuildRequires:  cmake >= 2.8
 BuildRequires:  gcc-c++
@@ -64,19 +64,25 @@ make %{?_smp_mflags} DESTDIR=%{buildroot} install
 %postun -p /sbin/ldconfig
 
 %files
-%doc LICENSE
+%doc README.md
+%license LICENSE
 %{_libdir}/libcld2.so.*
 %{_libdir}/libcld2_dynamic.so.*
 %{_libdir}/libcld2_full.so.*
 
 %files devel
-%doc LICENSE docs/*
+%doc docs/*
+%license LICENSE
 %{_includedir}/%{name}
 %{_libdir}/libcld2.so
 %{_libdir}/libcld2_dynamic.so
 %{_libdir}/libcld2_full.so
 
 %changelog
+* Wed May 24 2017 Wolfgang Stöggl <c72578@yahoo.de> - 0.0.0-0.5.gitb56fa78
+- Use license macro for LICENSE
+- Add doc README.md
+
 * Fri May 05 2017 Wolfgang Stöggl <c72578@yahoo.de> - 0.0.0-0.4.gitb56fa78
 - Simplify cmake, use cmake macro
 
