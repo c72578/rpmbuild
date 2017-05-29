@@ -2,7 +2,7 @@
 %define minor 9
 Name:           cpprest
 Version:        2.9.1
-Release:        10%{?dist}
+Release:        11%{?dist}
 Summary:        C++ REST library
 License:        MIT
 Url:            https://github.com/Microsoft/cpprestsdk
@@ -13,8 +13,8 @@ Patch1:         cpprest-2.9.1-openssl-1.1.patch
 BuildRequires:  boost-devel >= 1.55
 BuildRequires:  cmake >= 2.6
 BuildRequires:  gcc-c++
-# BuildRequires:  openssl-devel >= 1.0
-BuildRequires:  pkgconfig(openssl) >= 1.0
+BuildRequires:  openssl-devel >= 1.0
+# BuildRequires:  pkgconfig(openssl) >= 1.0
 # Current websockettpp versions: 0.4 (F24), 0.7 (>= F25), 0.5.1 (embedded in cpprestsdk 2.9.1)
 BuildRequires:  websocketpp-devel >= 0.4
 # PR submitted upstream: Change end-of-line encoding of two files to Unix (LF)
@@ -88,6 +88,10 @@ ln -sf libcpprest.so.%{major}.%{minor} %{buildroot}%{_libdir}/libcpprest.so
 
 
 %changelog
+* Mon May 29 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.9.1-11
+- Explicitly require openssl-devel instead of pkgconfig(openssl), so we
+  build against OpenSSL 1.1 on F26 and rawhide and not compat-openssl10.
+
 * Wed May 24 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.9.1-10
 - Apply cpprest-2.9.1-openssl-1.1.patch anyway, remove the condition
   fedora > 25, which is not needed
