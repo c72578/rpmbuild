@@ -1,6 +1,6 @@
 Name:           poedit
 Version:        2.0.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        GUI editor for GNU gettext .po files
 Summary(de):    Grafischer Editor für GNU Gettext-Dateien
 
@@ -9,6 +9,12 @@ License:        MIT
 URL:            http://www.poedit.net/
 Source0:        https://github.com/vslavik/%{name}/releases/download/v%{version}-oss/%{name}-%{version}.tar.gz
 Source1:        http://pkgs.fedoraproject.org/cgit/rpms/%{name}.git/plain/%{name}.1.de.po
+# See: https://github.com/vslavik/poedit/issues/396
+# Revert https://github.com/vslavik/poedit/commit/f98feb2e42fe438d453a33fdab142fe1b708f038
+# Revert https://github.com/vslavik/poedit/commit/4b692e67b336e94f19422b200bcc6a20d285f23d
+# git diff 4b692e6 0f9dac7 > ~/rpmbuild/SOURCES/poedit-2.0.2_revert_4b692e6_f98feb2_invoke-dde_line_switch.patch
+# Workaround for now, until this is fixed
+Patch1:         poedit-2.0.2_revert_4b692e6_f98feb2_invoke-dde_line-switch.patch
 
 BuildRequires:  wxGTK3-devel >= 3.0.3
 BuildRequires:  gtkspell3-devel
@@ -42,7 +48,7 @@ Dienstprogramme aus GNU Gettext bereit, sowie einen Katalogeditor und einen
 Quellcode-Parser. Es hilft beim Übersetzen von Anwendungen in andere Sprachen.
 
 %prep
-%setup -q
+%autosetup -p1
 # Make sure docs are utf-8
 for FILE in `find docs/en -name '*.hhp'`; do
     iconv -f iso-8859-15 -t utf-8 $FILE > $FILE.tmp && \
@@ -127,6 +133,10 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 
 
 %changelog
+* Tue May 30 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.0.2-3
+- Revert commit f98feb2, which did not allow opening of .po files any more
+  This is a temporary workaround, until it gets fixed
+
 * Thu May 18 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.0.2-2
 - Add dependency on json-devel
   Use json.hpp from Fedora and not the version bundled with Poedit
