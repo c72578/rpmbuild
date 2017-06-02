@@ -10,7 +10,7 @@
 
 Name:           cld2
 Version:        0.0.0
-Release:        0.5%{?usesnapshot:.git%{shortcommit0}}%{?dist}
+Release:        0.6%{?usesnapshot:.git%{shortcommit0}}%{?dist}
 Summary:        A library to detect the natural language of text
 License:        ASL 2.0
 URL:            https://github.com/CLD2Owners/cld2/
@@ -21,7 +21,6 @@ Source0:        https://github.com/%{githubproj}/%{githubrepo}/archive/%{commit0
 # Stored CMakeLists.txt 0.0.198 at own github repo for now
 Source1:        https://raw.githubusercontent.com/c72578/rpmbuild/master/SOURCES/CMakeLists.txt
 BuildRequires:  cmake >= 2.8
-BuildRequires:  gcc-c++
 
 %description
 A library that detects over 80 languages in UTF-8 text, based largely
@@ -60,6 +59,21 @@ make %{?_smp_mflags}
 cd build
 make %{?_smp_mflags} DESTDIR=%{buildroot} install
 
+%check
+cd build
+# Tests from: internal/compile_and_test_all.sh
+echo "this is some english text" | ./compact_lang_det_test_chrome_2
+echo "this is some english text" | ./compact_lang_det_test_chrome_16
+./cld2_unittest_chrome_2 > /dev/null
+./cld2_unittest_avoid_chrome_2 > /dev/null
+echo "this is some english text" | ./compact_lang_det_test_full
+./cld2_unittest_full > /dev/null
+./cld2_unittest_full_avoid > /dev/null
+./cld2_dynamic_data_tool --dump cld2_data.bin
+./cld2_dynamic_data_tool --verify cld2_data.bin
+echo "this is some english text" | ./compact_lang_det_dynamic_test_chrome --data-file cld2_data.bin
+./cld2_dynamic_unittest --data-file cld2_data.bin > /dev/null
+
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
@@ -79,6 +93,10 @@ make %{?_smp_mflags} DESTDIR=%{buildroot} install
 %{_libdir}/libcld2_full.so
 
 %changelog
+* Fri Jun 02 2017 Wolfgang Stöggl <c72578@yahoo.de> - 0.0.0-0.6.gitb56fa78
+- Removed BR: gcc-c++
+- Added check section and tests
+
 * Wed May 24 2017 Wolfgang Stöggl <c72578@yahoo.de> - 0.0.0-0.5.gitb56fa78
 - Use license macro for LICENSE
 - Add doc README.md
