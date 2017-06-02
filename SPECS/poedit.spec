@@ -1,6 +1,6 @@
 Name:           poedit
 Version:        2.0.2
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        GUI editor for GNU gettext .po files
 Summary(de):    Grafischer Editor für GNU Gettext-Dateien
 
@@ -9,12 +9,11 @@ License:        MIT
 URL:            http://www.poedit.net/
 Source0:        https://github.com/vslavik/%{name}/releases/download/v%{version}-oss/%{name}-%{version}.tar.gz
 Source1:        http://pkgs.fedoraproject.org/cgit/rpms/%{name}.git/plain/%{name}.1.de.po
+# Upstream fix to enable opening of .po files again in Poedit 2.0.2
 # See: https://github.com/vslavik/poedit/issues/396
-# Revert https://github.com/vslavik/poedit/commit/f98feb2e42fe438d453a33fdab142fe1b708f038
-# Revert https://github.com/vslavik/poedit/commit/4b692e67b336e94f19422b200bcc6a20d285f23d
-# git diff 4b692e6 0f9dac7 > ~/rpmbuild/SOURCES/poedit-2.0.2_revert_4b692e6_f98feb2_invoke-dde_line_switch.patch
-# Workaround for now, until this is fixed
-Patch1:         poedit-2.0.2_revert_4b692e6_f98feb2_invoke-dde_line-switch.patch
+# Commit: https://github.com/vslavik/poedit/commit/86e0677f48a309314b45ba5f06c1c62d14b2200d
+# Fix DrawRoundedRectangle assert with wxGTK 3.0
+Patch1:         poedit-2.0.2_fix_drawroundedrectangle_assert.patch
 
 BuildRequires:  wxGTK3-devel >= 3.0.3
 BuildRequires:  gtkspell3-devel
@@ -133,6 +132,10 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 
 
 %changelog
+* Fri Jun 02 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.0.2-4
+- Add upstream fix to enable opening of .po files again in Poedit 2.0.2
+  Fix DrawRoundedRectangle assert with wxGTK 3.0
+  
 * Tue May 30 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.0.2-3
 - Revert commit f98feb2, which did not allow opening of .po files any more
   This is a temporary workaround, until it gets fixed
