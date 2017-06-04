@@ -4,13 +4,15 @@
 #For git snapshots, set to 0 to use release instead:
 %global usesnapshot 1
 %if 0%{?usesnapshot}
+    %global commitdate0 20150821
     %global commit0 b56fa78a2fe44ac2851bae5bf4f4693a0644da7b
     %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %endif
 
 Name:           cld2
-Version:        0.0.0
-Release:        0.6%{?usesnapshot:.git%{shortcommit0}}%{?dist}
+# When upstream has never chosen a version, you MUST use Version: 0.
+Version:        0
+Release:        0.7%{?usesnapshot:.%{commitdate0}git%{shortcommit0}}%{?dist}
 Summary:        A library to detect the natural language of text
 License:        ASL 2.0
 URL:            https://github.com/CLD2Owners/cld2/
@@ -93,6 +95,10 @@ echo "this is some english text" | ./compact_lang_det_dynamic_test_chrome --data
 %{_libdir}/libcld2_full.so
 
 %changelog
+* Sun Jun 04 2017 Wolfgang Stöggl <c72578@yahoo.de> - 0-0.7.20150821gitb56fa78
+- Change version of package from 0.0.0 to 0
+- Added date of git commit to <snapinfo>
+
 * Fri Jun 02 2017 Wolfgang Stöggl <c72578@yahoo.de> - 0.0.0-0.6.gitb56fa78
 - Removed BR: gcc-c++
 - Added check section and tests
