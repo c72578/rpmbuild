@@ -1,0 +1,90 @@
+diff --git a/Release/tests/functional/http/client/connections_and_errors.cpp b/Release/tests/functional/http/client/connections_and_errors.cpp
+index 251dc3ce..3ac1a7db 100644
+--- a/Release/tests/functional/http/client/connections_and_errors.cpp
++++ b/Release/tests/functional/http/client/connections_and_errors.cpp
+@@ -113,6 +113,7 @@ TEST_FIXTURE(uri_address, server_close_without_responding)
+     VERIFY_THROWS_HTTP_ERROR_CODE(client.request(methods::GET).wait(), std::errc::host_unreachable);
+ }
+ 
++/*
+ TEST_FIXTURE(uri_address, request_timeout)
+ {
+     test_http_server::scoped_server scoped(m_uri);
+@@ -129,7 +130,9 @@ TEST_FIXTURE(uri_address, request_timeout)
+     VERIFY_THROWS_HTTP_ERROR_CODE(responseTask.get(), std::errc::timed_out);
+ #endif
+ }
++*/
+ 
++/*
+ TEST_FIXTURE(uri_address, request_timeout_microsecond)
+ {
+     test_http_server::scoped_server scoped(m_uri);
+@@ -145,6 +148,7 @@ TEST_FIXTURE(uri_address, request_timeout_microsecond)
+     VERIFY_THROWS_HTTP_ERROR_CODE(responseTask.get(), std::errc::timed_out);
+ #endif
+ }
++*/
+ 
+ TEST_FIXTURE(uri_address, invalid_method)
+ {
+diff --git a/Release/tests/functional/http/listener/requests_tests.cpp b/Release/tests/functional/http/listener/requests_tests.cpp
+index be3317d6..82f0917f 100644
+--- a/Release/tests/functional/http/listener/requests_tests.cpp
++++ b/Release/tests/functional/http/listener/requests_tests.cpp
+@@ -174,6 +174,7 @@ TEST_FIXTURE(uri_address, large_body)
+     listener.close().wait();
+ }
+ 
++/*
+ TEST_FIXTURE(uri_address, response_order)
+ {
+     http_listener listener(m_uri);
+@@ -217,6 +218,7 @@ TEST_FIXTURE(uri_address, response_order)
+ 
+     listener.close().wait();
+ }
++*/
+ 
+ TEST_FIXTURE(uri_address, uri_encoding, "Ignore", "Codeplex 201")
+ {
+diff --git a/Release/tests/functional/websockets/client/authentication_tests.cpp b/Release/tests/functional/websockets/client/authentication_tests.cpp
+index c04a90e1..46b44d7a 100644
+--- a/Release/tests/functional/websockets/client/authentication_tests.cpp
++++ b/Release/tests/functional/websockets/client/authentication_tests.cpp
+@@ -217,6 +217,7 @@ void handshake_error_test_impl(const ::utility::string_t &host)
+     }
+ }
+ 
++/*
+ TEST(self_signed_cert)
+ {
+     handshake_error_test_impl(U("wss://www.pcwebshop.co.uk/"));
+@@ -231,6 +232,7 @@ TEST(cert_expired)
+ {
+     handshake_error_test_impl(U("wss://tv.eurosport.com/"));
+ }
++*/
+ 
+ #endif
+ 
+diff --git a/Release/tests/functional/websockets/client/client_construction.cpp b/Release/tests/functional/websockets/client/client_construction.cpp
+index 766fa968..252ef107 100644
+--- a/Release/tests/functional/websockets/client/client_construction.cpp
++++ b/Release/tests/functional/websockets/client/client_construction.cpp
+@@ -82,6 +82,7 @@ TEST_FIXTURE(uri_address, get_client_config_callback_client)
+ }
+ 
+ 
++/*
+ // Verify that we can get the baseuri from websocket_client connect.
+ TEST_FIXTURE(uri_address, uri_test)
+ {
+@@ -101,6 +102,7 @@ TEST_FIXTURE(uri_address, uri_test)
+     VERIFY_ARE_EQUAL(client2.uri(), m_uri);
+     client2.close().wait();
+ }
++*/
+ 
+ TEST_FIXTURE(uri_address, move_operations)
+ {
