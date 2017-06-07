@@ -2,7 +2,7 @@
 %define minor 9
 Name:           cpprest
 Version:        2.9.1
-Release:        12%{?dist}
+Release:        13%{?dist}
 Summary:        C++ REST library
 License:        MIT
 Url:            https://github.com/Microsoft/cpprestsdk
@@ -13,6 +13,8 @@ Patch1:         cpprest-2.9.1-openssl-1.1.patch
 # Disable outside/failing tests
 # https://github.com/Microsoft/cpprestsdk/issues/27
 Patch2:         cpprest-2.9.1-disable-outside-tests.patch
+# Disable tests with long timeouts
+Patch3:         cpprest-2.9.1-disable-tests-long-timeouts.patch
 BuildRequires:  boost-devel >= 1.55
 BuildRequires:  cmake >= 2.6
 BuildRequires:  openssl-devel >= 1.0
@@ -94,6 +96,8 @@ cd Release/build.release/Binaries
 
 
 %changelog
+* Wed Jun 07 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.9.1-13
+- Add patch to disable tests with long timeouts, which fail in mock build
 
 * Wed Jun 07 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.9.1-12
 - Removed BR: gcc-c++
