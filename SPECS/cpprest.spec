@@ -2,7 +2,7 @@
 %define minor 9
 Name:           cpprest
 Version:        2.9.1
-Release:        11%{?dist}
+Release:        12%{?dist}
 Summary:        C++ REST library
 License:        MIT
 Url:            https://github.com/Microsoft/cpprestsdk
@@ -10,9 +10,11 @@ Source0:        https://github.com/Microsoft/cpprestsdk/archive/v%{version}.tar.
 # Patch1 https://github.com/Microsoft/cpprestsdk/pull/285
 # Fix build issue with openssl-1.1
 Patch1:         cpprest-2.9.1-openssl-1.1.patch
+# Disable outside/failing tests
+# https://github.com/Microsoft/cpprestsdk/issues/27
+Patch2:         cpprest-2.9.1-disable-outside-tests.patch
 BuildRequires:  boost-devel >= 1.55
 BuildRequires:  cmake >= 2.6
-BuildRequires:  gcc-c++
 BuildRequires:  openssl-devel >= 1.0
 # BuildRequires:  pkgconfig(openssl) >= 1.0
 # Current websockettpp versions: 0.4 (F24), 0.7 (>= F25), 0.5.1 (embedded in cpprestsdk 2.9.1)
@@ -71,6 +73,10 @@ install -d -m 755 %{buildroot}%{_libdir}
 cp Release/build.release/Binaries/libcpprest.so.%{major}.%{minor} %{buildroot}%{_libdir}/
 ln -sf libcpprest.so.%{major}.%{minor} %{buildroot}%{_libdir}/libcpprest.so
 
+%check
+cd Release/build.release/Binaries
+./test_runner *_test.so
+
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
@@ -88,6 +94,12 @@ ln -sf libcpprest.so.%{major}.%{minor} %{buildroot}%{_libdir}/libcpprest.so
 
 
 %changelog
+
+* Wed Jun 07 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.9.1-12
+- Removed BR: gcc-c++
+- Added check section and tests
+- Add patch to disable outside/failing tests
+
 * Mon May 29 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.9.1-11
 - Explicitly require openssl-devel instead of pkgconfig(openssl), so we
   build against OpenSSL 1.1 on F26 and rawhide and not compat-openssl10.
