@@ -2,7 +2,7 @@
 Name:    websocketpp
 Summary: C++ WebSocket Protocol Library
 Version: 0.7.0
-Release: 4%{?dist}
+Release: 7%{?dist}
 
 License: BSD
 Url:     http://www.zaphoyd.com/websocketpp
@@ -13,17 +13,26 @@ BuildArch: noarch
 # put cmake files in share/cmake instead of lib/cmake
 Patch1: websocketpp-0.7.0-cmake_noarch.patch
 
-%if 0%{?fedora} > 25
-# This patch fixes compilation errors in F26 etc., which contain openssl >= 1.1
-# SSL_R_SHORT_READ undefined in openssl-1.1
-# See also https://github.com/zaphoyd/websocketpp/issues/599
-# Commit: https://github.com/LocutusOfBorg/websocketpp/commit/1dd07113f2a7489444a8990a95be42e035f8e9df
-Patch2: %{name}-Fix-issue-599.patch
-%endif
+# make compatible with openssl-1.1.x
+# https://github.com/zaphoyd/websocketpp/issues/599
+Patch2: websocketpp-0.7.0-openssl11.patch
+
+# Fix build and test failures with zlib 1.2.11. Fixes test_permessage_deflate
+# https://github.com/zaphoyd/websocketpp/issues/653
+# Upstream patches, backported to websocketpp-0.7.0
+# https://github.com/zaphoyd/websocketpp/commit/9ddb300d874a30db35e3ad58f188944bef0bf31b
+Patch3: websocketpp-0.7.0-zlib-permessage-deflate.patch
+# https://github.com/zaphoyd/websocketpp/commit/4cab5e5c0c5f19fcee7d37b4a38b156d63a150d4
+Patch4: websocketpp-0.7.0-minor-adjustments-to-recent-extension-negotiation.patch
+
+# Disable the following tests, which fail occasionally: test_transport, test_transport_asio_timers
+Patch5: websocketpp-0.7.0-disable-test_transport-test_transport_asio_timers.patch
 
 BuildRequires:  boost-devel
 BuildRequires:  cmake
-BuildRequires:  pkgconfig
+# needed for tests mostly
+BuildRequires:  openssl-devel
+BuildRequires:  zlib-devel
 
 %description
 WebSocket++ is an open source (BSD license) header only C++ library
@@ -50,7 +59,8 @@ iostreams and one based on Boost Asio.
 %build
 mkdir %{_target_platform}
 pushd %{_target_platform}
-%cmake ..
+%cmake .. \
+  -DBUILD_TESTS:BOOL=ON
 
 make %{?_smp_mflags}
 popd
@@ -59,19 +69,37 @@ popd
 %install
 make install/fast DESTDIR=%{buildroot} -C %{_target_platform}
 
+## unpackaged files
+rm -rfv %{buildroot}%{_includedir}/test_connection/
+
+
+%check
+make test -C %{_target_platform}
+
 
 %files devel
-%doc COPYING changelog.md readme.md roadmap.md
+%doc changelog.md readme.md roadmap.md
+%license COPYING
 %{_includedir}/websocketpp/
 %dir %{_datadir}/cmake/
 %{_datadir}/cmake/websocketpp/
 
 
 %changelog
-* Fri May 12 2017 Wolfgang Stöggl <c72578@yahoo.de> - 0.7.0-4
-- Added websocketpp-Fix-issue-599.patch
-  Fixes compilation errors in F26 etc., which contain openssl >= 1.1
-  SSL_R_SHORT_READ undefined in openssl-1.1
+* Tue Jun 13 2017 Wolfgang Stöggl <c72578@yahoo.de> - 0.7.0-7
+- Add patches to fix zlib test failure (test_permessage_deflate)
+- Disable tests test_transport, test_transport_asio_timers
+
+* Fri May 26 2017 Rex Dieter <rdieter@fedoraproject.org> - 0.7.0-6
+- explicitly use openssl-devel (instead of generic 'pkgconfig(openssl)'
+
+* Mon May 22 2017 Rex Dieter <rdieter@fedoraproject.org> - 0.7.0-5
+- adjust openssl patch
+- BR: openssl-devel zlib-devel (for tests mostly)
+
+* Wed May 17 2017 Rex Dieter <rdieter@fedoraproject.org> - 0.7.0-4
+- tls.hpp, SSL_R_SHORT_READ undefined in openssl-1.1 (#1449163)
+- enable tests
 
 * Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 0.7.0-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
