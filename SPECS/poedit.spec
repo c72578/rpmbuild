@@ -1,6 +1,6 @@
 Name:           poedit
-Version:        2.0.2
-Release:        4%{?dist}
+Version:        2.0.3
+Release:        0.1%{?dist}
 Summary:        GUI editor for GNU gettext .po files
 Summary(de):    Grafischer Editor für GNU Gettext-Dateien
 
@@ -9,18 +9,11 @@ License:        MIT
 URL:            http://www.poedit.net/
 Source0:        https://github.com/vslavik/%{name}/releases/download/v%{version}-oss/%{name}-%{version}.tar.gz
 Source1:        http://pkgs.fedoraproject.org/cgit/rpms/%{name}.git/plain/%{name}.1.de.po
-# Upstream fix to enable opening of .po files again in Poedit 2.0.2
-# See: https://github.com/vslavik/poedit/issues/396
-# Commit: https://github.com/vslavik/poedit/commit/86e0677f48a309314b45ba5f06c1c62d14b2200d
-# Fix DrawRoundedRectangle assert with wxGTK 3.0
-Patch1:         poedit-2.0.2_fix_drawroundedrectangle_assert.patch
 
 BuildRequires:  wxGTK3-devel >= 3.0.3
 BuildRequires:  gtkspell3-devel
 BuildRequires:  libappstream-glib
 BuildRequires:  lucene++-devel
-# Not required any more in Poedit >= 2.0.0
-# BuildRequires:  libdb-cxx-devel
 BuildRequires:  boost-devel
 BuildRequires:  desktop-file-utils
 BuildRequires:  po4a
@@ -79,10 +72,6 @@ desktop-file-install \
     --dir %{buildroot}%{_datadir}/applications \
     %{buildroot}%{_datadir}/applications/poedit.desktop
 
-# work around for https://bugzilla.redhat.com/show_bug.cgi?id=866058
-# Not available any more in Poedit >= 2.0.0
-# rm -f %%{buildroot}%%{_datadir}/icons/hicolor/*/mimetypes/text-x-gettext-translation.*
-
 # Generate and install localized man pages
 mkdir -p man/de
 po4a-translate -M utf-8 -f man \
@@ -122,16 +111,27 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_datadir}/appdata/%{name}.appdata.xml
 %{_datadir}/applications/*.desktop
 %{_datadir}/icons/hicolor/*/apps/*
-# Not available any more in Poedit >= 2.0.0
-# %%{_datadir}/icons/hicolor/*/mimetypes/*
 %{_datadir}/poedit
 %{_datadir}/pixmaps/*
-# Not available any more in Poedit >= 2.0.0
-# %%{_libexecdir}/poedit-dump-legacy-tm
 %{_mandir}/man?/*
 
 
 %changelog
+* Tue Jul 25 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.0.3-0.1
+- New upstream version
+- Use prerelease version tags (less than 1) for copr builds from now on
+
+* Sat Jun 03 2017 Mario Blättermann <mario.blaettermann@gmail.com> - 2.0.2-5
+- Thanks to Wolfgang Stöggl <c72578@yahoo.de> for the following changes:
+- Add upstream fix to enable opening of .po files again in Poedit 2.0.2
+- Fix DrawRoundedRectangle assert with wxGTK 3.0
+- Add dependency on json-devel (use json.hpp from Fedora and not the version
+  bundled with Poedit
+- Fixed spurious assert in wxGTK wxDataViewCtrl::EditItem()
+- Compile with CLD2 language detection from copr c72578/cld2
+- Compile with Crowdin integration using cpprest from copr c72578/cpprest
+- Remove outdated BuildRequires
+
 * Fri Jun 02 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.0.2-4
 - Add upstream fix to enable opening of .po files again in Poedit 2.0.2
   Fix DrawRoundedRectangle assert with wxGTK 3.0
