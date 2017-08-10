@@ -12,7 +12,7 @@
 Name:           cld2
 # When upstream has never chosen a version, you MUST use Version: 0.
 Version:        0
-Release:        0.7%{?usesnapshot:.%{commitdate0}git%{shortcommit0}}%{?dist}
+Release:        0.8%{?usesnapshot:.%{commitdate0}git%{shortcommit0}}%{?dist}
 Summary:        A library to detect the natural language of text
 License:        ASL 2.0
 URL:            https://github.com/CLD2Owners/cld2/
@@ -42,7 +42,7 @@ This sub-package contains the headers for cld2.
 %if 0%{?usesnapshot}
     %autosetup -n %name-%{commit0}
 %else
-    %setup -q
+    %autosetup
 %endif
 cp %{SOURCE1} .
 
@@ -88,13 +88,16 @@ echo "this is some english text" | ./compact_lang_det_dynamic_test_chrome --data
 
 %files devel
 %doc docs/*
-%license LICENSE
 %{_includedir}/%{name}
 %{_libdir}/libcld2.so
 %{_libdir}/libcld2_dynamic.so
 %{_libdir}/libcld2_full.so
 
 %changelog
+* Thu Aug 10 2017 Wolfgang Stöggl <c72578@yahoo.de> - 0-0.8.20150821gitb56fa78
+- Modifications according to package review (#1441728)
+- Removed license file from devel package
+
 * Sun Jun 04 2017 Wolfgang Stöggl <c72578@yahoo.de> - 0-0.7.20150821gitb56fa78
 - Change version of package from 0.0.0 to 0
 - Added date of git commit to <snapinfo>
@@ -112,7 +115,7 @@ echo "this is some english text" | ./compact_lang_det_dynamic_test_chrome --data
 
 * Wed May 03 2017 Wolfgang Stöggl <c72578@yahoo.de> - 0.0.0-0.3.gitb56fa78
 - Fix unused-direct-shlib-dependency reported by rpmlint (installed packages)
-- Update CMakeLists.txt to version 0.0.198, to avoid 
+- Update CMakeLists.txt to version 0.0.198, to avoid
   shared-lib-without-dependency-information of libcld2_full
 
 * Wed May 03 2017 Wolfgang Stöggl <c72578@yahoo.de> - 0.0.0-0.2.gitb56fa78
