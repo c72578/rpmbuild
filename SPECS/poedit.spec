@@ -1,5 +1,5 @@
 Name:           poedit
-Version:        2.0.3
+Version:        2.0.4
 Release:        0.1%{?dist}
 Summary:        GUI editor for GNU gettext .po files
 Summary(de):    Grafischer Editor für GNU Gettext-Dateien
@@ -14,17 +14,20 @@ BuildRequires:  wxGTK3-devel >= 3.0.3
 BuildRequires:  gtkspell3-devel
 BuildRequires:  libappstream-glib
 BuildRequires:  lucene++-devel
+BuildRequires:  gcc-c++
 BuildRequires:  boost-devel
 BuildRequires:  desktop-file-utils
 BuildRequires:  po4a
 BuildRequires:  libsecret-devel
 BuildRequires:  openssl-devel
-# cpprest from copr c72578/cpprest
 BuildRequires:  cpprest-devel
-# cld2 from copr c72578/cld2
+# cld2 is not available for ppc64 s390x
+%ifnarch ppc64 s390x
 BuildRequires:  cld2-devel
+%endif
 # Use json.hpp from Fedora and not the version bundled with Poedit
 BuildRequires:  json-devel
+
 
 Requires:       gettext
 
@@ -40,7 +43,7 @@ Dienstprogramme aus GNU Gettext bereit, sowie einen Katalogeditor und einen
 Quellcode-Parser. Es hilft beim Übersetzen von Anwendungen in andere Sprachen.
 
 %prep
-%autosetup -p1
+%autosetup
 # Make sure docs are utf-8
 for FILE in `find docs/en -name '*.hhp'`; do
     iconv -f iso-8859-15 -t utf-8 $FILE > $FILE.tmp && \
@@ -50,7 +53,12 @@ done
 
 
 %build
+%ifarch ppc64 s390x
+# cld2 is not available for ppc64 s390x
+%configure --with-wx-config=/usr/bin/wx-config-3.0 --with-cpprest
+%else
 %configure --with-wx-config=/usr/bin/wx-config-3.0 --with-cpprest --with-cld2
+%endif
 make %{?_smp_mflags} V=1
 
 
@@ -117,9 +125,18 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 
 
 %changelog
-* Tue Jul 25 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.0.3-0.1
+* Fri Oct 13 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.0.4-0.1
 - New upstream version
-- Use prerelease version tags (less than 1) for copr builds from now on
+- Configure without cld2 for ppc64 s390x (instead of ExcludeArch)
+
+* Mon Aug 28 2017 Mario Blättermann <mario.blaettermann@gmail.com> - 2.0.3-3
+- Add ExcludeArch: ppc64 s390x (no cld2 there)
+- Use cld2-devel for language detection
+- Add BuildRequires:  gcc-c++
+
+* Wed Jul 26 2017 Mario Blättermann <mario.blaettermann@gmail.com> - 2.0.3-1
+- New upstream version
+- Use cpprest-devel for Crowdin support
 
 * Sat Jun 03 2017 Mario Blättermann <mario.blaettermann@gmail.com> - 2.0.2-5
 - Thanks to Wolfgang Stöggl <c72578@yahoo.de> for the following changes:
@@ -132,59 +149,14 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 - Compile with Crowdin integration using cpprest from copr c72578/cpprest
 - Remove outdated BuildRequires
 
-* Fri Jun 02 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.0.2-4
-- Add upstream fix to enable opening of .po files again in Poedit 2.0.2
-  Fix DrawRoundedRectangle assert with wxGTK 3.0
-  
-* Tue May 30 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.0.2-3
-- Revert commit f98feb2, which did not allow opening of .po files any more
-  This is a temporary workaround, until it gets fixed
+* Mon May 15 2017 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.0.2-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_27_Mass_Rebuild
 
-* Thu May 18 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.0.2-2
-- Add dependency on json-devel
-  Use json.hpp from Fedora and not the version bundled with Poedit
-- Compile with wxGTK3-3.0.3
-  Fixed spurious assert in wxGTK wxDataViewCtrl::EditItem()
-- Compile with CLD2 language detection from copr c72578/cld2
-- Compile with Crowdin integration using cpprest from copr c72578/cpprest
-
-* Mon May 15 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.0.2-1
+* Mon May 15 2017 Mario Blättermann <mario.blaettermann@gmail.com> - 2.0.2-1
 - New upstream version
-- Compile with wxGTK3-3.0.3
-  Fixed spurious assert in wxGTK wxDataViewCtrl::EditItem()
-- Compile with CLD2 language detection from copr c72578/cld2
-- Compile with Crowdin integration using cpprest from copr c72578/cpprest
 
-* Tue May 02 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.0.1-3
-- Compile with wxGTK3-3.0.3-1 using cpprest from copr c72578/wxGTK3
-  Fixed spurious assert in wxGTK wxDataViewCtrl::EditItem()
-- Compile with CLD2 language detection from copr c72578/cld2
-- Compile with Crowdin integration using cpprest from copr c72578/cpprest
-
-* Fri Apr 28 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.0.1-2
-- Removed dependency on libdb-cxx-devel
-  (code for migrating pre-1.6 TM has been removed in Poedit >= 2.0.0)
-- Compile with wxGTK3-3.0.3-0.9.git3fa9964 using cpprest from copr c72578/wxGTK3
-  Fixed spurious assert in wxGTK wxDataViewCtrl::EditItem()
-- Compile with CLD2 language detection from copr c72578/cld2
-- Compile with Crowdin integration using cpprest from copr c72578/cpprest
-
-* Wed Apr 26 2017 Wolfgang Stöggl <c72578@yahoo.de> - 2.0.1-1
+* Fri May 12 2017 Mario Blättermann <mario.blaettermann@gmail.com> - 2.0.1-1
 - New upstream version
-- Compile with wxGTK3-3.0.3-0.8.gite4293e9 using cpprest from copr c72578/wxGTK3
-- Compile with CLD2 language detection from copr c72578/cld2
-- Compile with Crowdin integration using cpprest from copr c72578/cpprest
-
-* Tue Apr 11 2017 Wolfgang Stöggl <c72578@yahoo.de> - 1.8.13-2
-- Compile with CLD2 language detection from copr c72578/cld2
-- Compile with Crowdin integration using cpprest from copr c72578/cpprest
-
-* Tue Apr 11 2017 Wolfgang Stöggl <c72578@yahoo.de> - 1.8.13-1
-- New upstream version
-- Compile with Crowdin integration using cpprest from copr c72578/cpprest
-
-* Mon Apr 10 2017 Wolfgang Stöggl <c72578@yahoo.de> - 1.8.12-2
-- Compile with Crowdin integration using cpprest from copr c72578/cpprest
 
 * Sun Feb 19 2017 Mario Blättermann <mario.blaettermann@gmail.com> - 1.8.12-1
 - New upstream version
