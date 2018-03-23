@@ -2,10 +2,11 @@
 
 Name:           mingw-windows-default-manifest
 Version:        6.4
-Release:        0.1%{?dist}
+Release:        0.2%{?dist}
 Summary:        MinGW Default Windows application manifest
 
-License:        FSFAP
+# The source code is FSFAP (see COPYING) except install-sh which is MIT/X11
+License:        FSFAP and MIT
 
 # https://cygwin.com/git/?p=cygwin-apps/windows-default-manifest.git;a=summary
 URL:            https://cygwin.com/
@@ -89,5 +90,8 @@ application manifest.
 %{mingw64_libdir}/default-manifest.o
 
 %changelog
+* Fri Mar 23 2018 Wolfgang Stöggl <c72578@yahoo.de> - 6.4-0.2
+- Add license details for MIT/X11
+
 * Wed Mar 21 2018 Wolfgang Stöggl <c72578@yahoo.de> - 6.4-0.1
 - Initial Fedora RPM release
